@@ -7,14 +7,13 @@ class LexAnalyzer extends LexicalAnalyzer{
   private var position: Int = -1
   var current : Char = ' '
   var currentString : String = " "
-  val lexems: List[String] = List("\\BEGIN\r\n","\\END\r\n", "\\TITLE[","]\r\n","]", "#", "\\PARB\r\n",
-                                  "\\PARE\r\n", "**\r\n","**","*", "*\r\n", "+", "\\\r\n", "[", "(", ")\r\n", "![",
+  val lexems: List[String] = List("\\BEGIN","\\END", "\\TITLE[","]","]", "#", "\\PARB",
+                                  "\\PARE", "**","**","*", "*", "+", "\\", "[", "(", ")", "![",
                                   "\\DEF[", "=", "\\USE[")
   var lexToken = new scala.collection.mutable.Queue[Char]
   override def addChar(): Unit = {
       lexToken.enqueue(current)
       currentString = lexToken.mkString
-
   }
 
   override def getChar(): Char = {
@@ -31,21 +30,25 @@ class LexAnalyzer extends LexicalAnalyzer{
     }else if(current.equals('\\') || current.equals(('#')) || current.equals('*')|| current.equals('[')|| current.equals('!')|| current.equals('+')) {
       addChar();
       current = getChar();
-      while(!(current.equals('\\') || current.equals(('#')) || current.equals('*')|| current.equals('[')|| current.equals('!')|| current.equals('+'))){
+      while(!(current.equals('\\') || current.equals(('#')) || current.equals('*')|| current.equals('[')|| current.equals('!')|| current.equals('+')
+             || current.equals('\n')||current.equals('\r'))){
         addChar();
         current = getChar();
       }
+      if(lookup()){
+        Compiler.currentToken = currentString
+        println(lookup())
+      }else{
+        println("Lexical Error- Token does not exist!")
+        System.exit(1)
+      }
     }
-    Compiler.currentToken = currentString
-    print(Compiler.currentToken)
-    println(lookup())
   }
 
   def lookup(): Boolean = {
     var flag = false
-    if(lexems.contains(Compiler.currentToken))
+    if(lexems.contains(currentString))
       flag = true
-
     flag
   }
 
