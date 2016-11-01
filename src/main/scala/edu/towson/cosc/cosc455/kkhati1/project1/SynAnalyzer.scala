@@ -16,7 +16,7 @@ class SynAnalyzer extends SyntaxAnalyzer{
         Tree.push(Compiler.currentToken)
       }
     } else {
-      println("SYNTAX ERROR : good message here, fool ")
+      println("SYNTAX ERROR : good message here, fool gittex ")
       System.exit(1)
     }
   }
@@ -47,11 +47,11 @@ class SynAnalyzer extends SyntaxAnalyzer{
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else{
-        println("SYNTAX ERROR : good message here, fool")
+        println("SYNTAX ERROR : good message here, fool body")
         System.exit(1)
       }
     }else{
-      println("SYNTAX ERROR : good message here, fool")
+      println("SYNTAX ERROR : good message here, fool body")
     }
   }
 
@@ -60,6 +60,8 @@ class SynAnalyzer extends SyntaxAnalyzer{
   override def heading(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.HEADING)){
       Tree.push(Compiler.currentToken)
+      Compiler.Scanner.getNextToken()
+      //if(Compiler)
     }
   }
 
@@ -121,7 +123,7 @@ class SynAnalyzer extends SyntaxAnalyzer{
       }
   }
 
-  def requiredLetters:Unit = {
+  def requiredLetters():Unit = {
     for(letter <- 'A' to 'Z'){
       if(Compiler.currentToken.equals(letter)){
         val char = letter.toString
