@@ -10,6 +10,7 @@ object  Compiler {
   val Scanner = new LexAnalyzer
   val Parser = new SynAnalyzer
   val Syman = new SemAnalyzer
+  var position: Int = -1
 
   def main(args: Array[String]) = {
 
@@ -17,8 +18,9 @@ object  Compiler {
     readFile(args(0))
 
     Scanner.getNextToken()
+    println(currentToken)
     //Calls start state of BNF in SyntaxAnalyzer
-    //Parser.gittex()
+    Parser.gittex()
 
     // on return, there is a parse tree
 
