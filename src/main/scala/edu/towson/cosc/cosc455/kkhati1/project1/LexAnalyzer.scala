@@ -9,10 +9,9 @@ import scala.collection.mutable
 class LexAnalyzer extends LexicalAnalyzer{
 
   var current : Char = ' '
-  var currentString : String = " "
   var Text : Boolean = false
   val lexems: List[String] = List("\\BEGIN","\\END", "\\TITLE[","]", "#", "\\PARB",
-                                  "\\PARE", "**","**","*", "*", "+", "\\", "[", "(", ")", "![",
+                                  "\\PARE", "*", "+", "\\", "[", "(", ")", "![",
                                   "\\DEF[", "=", "\\USE[")
   var tokenString = ""
   override def addChar(): Unit = {
@@ -26,41 +25,32 @@ class LexAnalyzer extends LexicalAnalyzer{
 
   override def getNextToken(): Unit = {
     current = getChar()
-    if ((current.equals(' ') || current.equals('\r') || current.equals('\n'))) {
-         current = getChar()
+    while(current.equals(' ') || current.equals('\n')) {
+        current = getChar()
     }
-    if (current.equals('\\') || current.equals('#') || current.equals('*') || current.equals('+')) {
+    if(current.equals('\\') || current.equals('#') || current.equals('*') || current.equals('[') || current.equals('+') || current.equals('!')){
       addChar()
-      current=getChar()
-      while (!((current.equals('[') || current.equals('(') || current.equals('\r') || current.equals('\n') ||current.equals(']')))) {
-          addChar()
-          current = getChar()
-        }
+      current = getChar()
+      while(!( current.equals('\r') || current.equals('\n') || current.equals('['))){
+        addChar()
+        current = getChar()
+      }
       if(current.equals('['))
         addChar()
-
       if(lookup()){
         Compiler.currentToken = tokenString
-        tokenString =""
-      }else{
-        var Tree2 = new mutable.Stack[String]()
-        Tree2 = Compiler.Parser.retTree
-        while(!Tree2.isEmpty)
-          println(Tree2.pop())
-        println("Lexical Token error: Token does not exist")
-        System.exit(1)
+        tokenString = ""
       }
-    }
-    if(text()){
+    }else if(text()){
       while(text()){
         addChar()
         current = getChar()
       }
       Compiler.currentToken = tokenString
       tokenString = ""
-    }
-    if(current.equals(CONSTANTS.BRACKETE))
+    }else if(current.equals(CONSTANTS.BRACKETE)){
       Compiler.currentToken = CONSTANTS.BRACKETE
+    }
   }
   def text() : Boolean = {
     Text = false

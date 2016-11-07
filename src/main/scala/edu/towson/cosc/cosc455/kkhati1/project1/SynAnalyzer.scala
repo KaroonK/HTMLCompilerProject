@@ -17,7 +17,6 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Tree.push(Compiler.currentToken)
       }
     } else {
-      println(Compiler.currentToken)
       println("SYNTAX ERROR : good message here, fool gittex ")
       System.exit(1)
     }
@@ -27,11 +26,12 @@ class SynAnalyzer extends SyntaxAnalyzer {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.TITLEB)){
       Tree.push(Compiler.currentToken)
       Compiler.Scanner.getNextToken()
-      while(!(Compiler.currentToken.equals(CONSTANTS.BRACKETE))) {
+      if(!(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE))){
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }
-      println(Tree.size)
+      Tree.push(Compiler.currentToken)
+      Compiler.Scanner.getNextToken()
     }else{
       println("Syntax Error: title")
       System.exit(1)
