@@ -1,5 +1,5 @@
 \BEGIN
-\TITLE[The Simpsons]
+\TITLE[Teh Simpsons]
 # The Simpsons
 \PARB
 The members of the [The Simpsons](https://en.wikipedia.org/wiki/The_Simpsons) are:

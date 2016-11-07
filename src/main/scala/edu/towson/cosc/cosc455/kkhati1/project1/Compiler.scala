@@ -1,4 +1,5 @@
 package edu.towson.cosc.cosc455.kkhati1.project1
+import scala.collection.mutable
 import scala.io.BufferedSource
 import scala.io.Source._
 /**
@@ -11,19 +12,18 @@ object  Compiler {
   val Parser = new SynAnalyzer
   val Syman = new SemAnalyzer
   var position: Int = -1
-
+  var textCheck = new scala.collection.mutable.Stack[String]
   def main(args: Array[String]) = {
 
     checkFile(args)
     readFile(args(0))
 
     Scanner.getNextToken()
-    println(currentToken)
-    //Calls start state of BNF in SyntaxAnalyzer
     Parser.gittex()
-
-    // on return, there is a parse tree
-
+    var Tree2 = new mutable.Stack[String]()
+    Tree2 = Parser.retTree
+    while(!Tree2.isEmpty)
+      println(Tree2.pop())
     //Semantic Analyzer do your thing
 
   }

@@ -5,29 +5,34 @@ package edu.towson.cosc.cosc455.kkhati1.project1
   */
 class SynAnalyzer extends SyntaxAnalyzer {
   var Tree = new scala.collection.mutable.Stack[String]
-  override def gittex(): Unit = {
+
+  override def gittex() : Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) {
-      Compiler.Scanner.getNextToken()
       Tree.push(Compiler.currentToken)
+      Compiler.Scanner.getNextToken()
       //variableDefine()
       title()
-      body()
+      //body()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE)) {
         Tree.push(Compiler.currentToken)
       }
     } else {
+      println(Compiler.currentToken)
       println("SYNTAX ERROR : good message here, fool gittex ")
       System.exit(1)
     }
   }
 
-  override def title(): Unit = {
-    if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.TITLEB)) {
+  override def title() : Unit = {
+    if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.TITLEB)){
       Tree.push(Compiler.currentToken)
       Compiler.Scanner.getNextToken()
-      //requiredText()
-    } else {
-      println("Title Print " + Compiler.currentToken)
+      while(!(Compiler.currentToken.equals(CONSTANTS.BRACKETE))) {
+        Tree.push(Compiler.currentToken)
+        Compiler.Scanner.getNextToken()
+      }
+      println(Tree.size)
+    }else{
       println("Syntax Error: title")
       System.exit(1)
     }
@@ -83,4 +88,10 @@ class SynAnalyzer extends SyntaxAnalyzer {
   override def image(): Unit = ???
 
   override def newline(): Unit = ???
+
+  def retTree: scala.collection.mutable.Stack[String]={
+    return Tree;
+  }
+
+
 }
