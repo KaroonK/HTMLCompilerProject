@@ -10,6 +10,7 @@ class LexAnalyzer extends LexicalAnalyzer{
 
   var current : Char = ' '
   var Text : Boolean = false
+  var BoolCheck : Boolean = false
   val lexems: List[String] = List("\\BEGIN","\\END", "\\TITLE[","]", "#", "\\PARB",
                                   "\\PARE", "*", "+", "\\\\", "[", "(", ")", "![",
                                   "\\DEF[", "=", "\\USE[")
@@ -24,55 +25,43 @@ class LexAnalyzer extends LexicalAnalyzer{
   }
 
   override def getNextToken(): Unit = {
+    Compiler.Parser.TextBool = false
     current = getChar()
-    if(current.equals(' ')|| current.equals('\n')){
-      Compiler.Parser.TextBool = false
-      isSpace()
-    }
-    if (isSpecial()){
-      Compiler.Parser.TextBool = false
-      addChar()
-      current = getChar()
-      while(!endChar()) {
+    if(isSpace()){while(isSpace()){current = getChar()}}
+    if(text()){
+      Compiler.Parser.TextBool = true;
+      do{
         addChar()
         current = getChar()
-      }
+      }while(text())
+      Compiler.currentToken = tokenString
+      tokenString = ""
+    }
+    else if(isSpecial()) {
+      do{addChar();current = getChar()} while (!endChar())
       if (current.equals('[') || current.equals('\\')
         || current.equals(']') || current.equals('*') || current.equals(')') || current.equals('(')) {
         addChar()
       }
-      if (lookup()) {
-        Compiler.currentToken = tokenString
-        tokenString =""
-      } else {
-        println("Lexical Error")
-      }
-    }
-    if(text()) {
-      Compiler.Parser.TextBool = true
-      addChar()
-      while (text()) {
-        current = getChar()
-        addChar()
-
-      }
-      Compiler.currentToken = tokenString
-      tokenString = ""
-    } else if( current.equals(')') || current.equals('(')){
-      Compiler.Parser.TextBool = false
-      addChar()
-      current = getChar()
       if(lookup()){
         Compiler.currentToken = tokenString
         tokenString = ""
+      }else{
+        println(Compiler.Parser.Tree.length)
+        while(!Compiler.Parser.Tree.isEmpty){
+          println(Compiler.Parser.Tree.pop())
+        }
+        System.exit(1)
       }
     }
+    else{println("Lexical Error second")}
   }
 
-  def isSpace(): Unit = {
-    while(current.equals('\r') || current.equals('\n') || current.equals(' ')){
-      current = getChar()
-    }
+  def isSpace(): Boolean = {
+    if(current.equals('\r') || current.equals('\n') || current.equals(' ')){
+      true
+    }else
+      false
   }
   def isSpecial(): Boolean = {
     current match{
@@ -84,7 +73,7 @@ class LexAnalyzer extends LexicalAnalyzer{
     current match {
       case '\r'| '\n' | '[' | '\\' | ']' | '*' | ')' | '('=> true
       case _ => false
-      }
+    }
   }
   def text() : Boolean = {
     Text = false
@@ -103,7 +92,7 @@ class LexAnalyzer extends LexicalAnalyzer{
     }
     if(current.equals(',') || current.equals('.')|| current.equals('\"')|| current.equals('.')
       || current.equals('?')|| current.equals('_')|| current.equals('/') || current.equals(' '))
-        Text = true
+      Text = true
 
     Text
   }

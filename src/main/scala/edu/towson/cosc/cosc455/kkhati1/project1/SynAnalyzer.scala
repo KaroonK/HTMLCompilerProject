@@ -26,16 +26,10 @@ class SynAnalyzer extends SyntaxAnalyzer {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.TITLEB)){
       Tree.push(Compiler.currentToken)
       Compiler.Scanner.getNextToken()
-      println(Compiler.currentToken)
-      println(TextBool)
       if(TextBool) {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else{
-        while(!Tree.isEmpty){
-          println(Tree.pop())
-        }
-        println(Compiler.currentToken)
         println("Syntax Error: Text Required")
         System.exit(1)
       }
@@ -43,6 +37,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }
+
     }else{
       println("Syntax Error: title")
       System.exit(1)
