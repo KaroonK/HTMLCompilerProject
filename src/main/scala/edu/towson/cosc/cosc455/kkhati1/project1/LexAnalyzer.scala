@@ -26,35 +26,43 @@ class LexAnalyzer extends LexicalAnalyzer{
 
   override def getNextToken(): Unit = {
     Compiler.Parser.TextBool = false
-    current = getChar()
-    if(isSpace()){while(isSpace()){current = getChar()}}
-    if(text()){
+    if (isSpace()) {
+      while (isSpace()) {
+        current = getChar()
+      }
+    }
+    if(lexems.contains(current.toString)){
+      Compiler.currentToken = current.toString
+    } else if (text()) {
       Compiler.Parser.TextBool = true;
-      do{
+      do {
         addChar()
         current = getChar()
-      }while(text())
+      } while (text())
       Compiler.currentToken = tokenString
       tokenString = ""
-    }
-    else if(isSpecial()) {
-      do{addChar();current = getChar()} while (!endChar())
-      if (current.equals('[') || current.equals('\\')
-        || current.equals(']') || current.equals('*') || current.equals(')') || current.equals('(')) {
+    } else if (isSpecial()) {
+      do {
+        addChar();
+        current = getChar()
+      } while (!endChar())
+      if (current.equals('[') || current.equals('\\') || current.equals('*') || current.equals(')') || current.equals('(')) {
         addChar()
+        current = getChar()
       }
-      if(lookup()){
+      if (lookup()) {
         Compiler.currentToken = tokenString
         tokenString = ""
-      }else{
-        println(Compiler.Parser.Tree.length)
-        while(!Compiler.Parser.Tree.isEmpty){
-          println(Compiler.Parser.Tree.pop())
-        }
+      } else {
+        println("GAY LEXICAL ERROR")
         System.exit(1)
       }
     }
-    else{println("Lexical Error second")}
+    else {
+      println("Lexical Error second")
+      System.exit(1)
+    }
+
   }
 
   def isSpace(): Boolean = {

@@ -12,7 +12,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
       Compiler.Scanner.getNextToken()
       //variableDefine()
       title()
-      //body()
+      body()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE)) {
         Tree.push(Compiler.currentToken)
       }
@@ -29,13 +29,15 @@ class SynAnalyzer extends SyntaxAnalyzer {
       if(TextBool) {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
-      }else{
+      }else {
         println("Syntax Error: Text Required")
         System.exit(1)
       }
-      if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) {
-        Tree.push(Compiler.currentToken)
+      if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
         Compiler.Scanner.getNextToken()
+        Tree.push(Compiler.currentToken)
+      }else{
+        println("Syntax error: Needs an ending bracket")
       }
 
     }else{
