@@ -11,7 +11,7 @@ class LexAnalyzer extends LexicalAnalyzer{
   var current : Char = ' '
   var Text : Boolean = false
   val lexems: List[String] = List("\\BEGIN","\\END", "\\TITLE[","]", "#", "\\PARB",
-                                  "\\PARE", "*", "+", "\\", "[", "(", ")", "![",
+                                  "\\PARE", "*", "+", "\\\\", "[", "(", ")", "![",
                                   "\\DEF[", "=", "\\USE[")
   var tokenString = ""
   override def addChar(): Unit = {
@@ -25,32 +25,66 @@ class LexAnalyzer extends LexicalAnalyzer{
 
   override def getNextToken(): Unit = {
     current = getChar()
-    while(current.equals(' ') || current.equals('\n')) {
-        current = getChar()
+    if(current.equals(' ')|| current.equals('\n')){
+      Compiler.Parser.TextBool = false
+      isSpace()
     }
-    if(current.equals('\\') || current.equals('#') || current.equals('*') || current.equals('[') || current.equals('+') || current.equals('!')){
+    if (isSpecial()){
+      Compiler.Parser.TextBool = false
       addChar()
       current = getChar()
-      while(!( current.equals('\r') || current.equals('\n') || current.equals('['))){
+      while(!endChar()) {
         addChar()
         current = getChar()
       }
-      if(current.equals('['))
+      if (current.equals('[') || current.equals('\\')
+        || current.equals(']') || current.equals('*') || current.equals(')') || current.equals('(')) {
         addChar()
+      }
+      if (lookup()) {
+        Compiler.currentToken = tokenString
+        tokenString =""
+      } else {
+        println("Lexical Error")
+      }
+    }
+    if(text()) {
+      Compiler.Parser.TextBool = true
+      addChar()
+      while (text()) {
+        current = getChar()
+        addChar()
+
+      }
+      Compiler.currentToken = tokenString
+      tokenString = ""
+    } else if( current.equals(')') || current.equals('(')){
+      Compiler.Parser.TextBool = false
+      addChar()
+      current = getChar()
       if(lookup()){
         Compiler.currentToken = tokenString
         tokenString = ""
       }
-    }else if(text()){
-      while(text()){
-        addChar()
-        current = getChar()
-      }
-      Compiler.currentToken = tokenString
-      tokenString = ""
-    }else if(current.equals(CONSTANTS.BRACKETE)){
-      Compiler.currentToken = CONSTANTS.BRACKETE
     }
+  }
+
+  def isSpace(): Unit = {
+    while(current.equals('\r') || current.equals('\n') || current.equals(' ')){
+      current = getChar()
+    }
+  }
+  def isSpecial(): Boolean = {
+    current match{
+      case '\\' | '*' | '#' | '+' | '[' | '!' => true
+      case _ => false
+    }
+  }
+  def endChar(): Boolean = {
+    current match {
+      case '\r'| '\n' | '[' | '\\' | ']' | '*' | ')' | '('=> true
+      case _ => false
+      }
   }
   def text() : Boolean = {
     Text = false
@@ -76,7 +110,7 @@ class LexAnalyzer extends LexicalAnalyzer{
   def lookup(): Boolean = {
     var flag = false
     if(lexems.contains(tokenString))
-      flag = true
+      flag = true;
     flag
   }
 

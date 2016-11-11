@@ -12,7 +12,6 @@ object  Compiler {
   val Parser = new SynAnalyzer
   val Syman = new SemAnalyzer
   var position: Int = -1
-  var textCheck = new scala.collection.mutable.Stack[String]
   def main(args: Array[String]) = {
 
     checkFile(args)
