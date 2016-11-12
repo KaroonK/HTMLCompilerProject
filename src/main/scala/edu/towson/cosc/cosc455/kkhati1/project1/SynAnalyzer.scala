@@ -30,20 +30,17 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else {
+        println(Compiler.currentToken)
         println("Syntax Error: Text Required")
         System.exit(1)
       }
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
-
-        Compiler.Scanner.getNextToken()
         Tree.push(Compiler.currentToken)
+        Compiler.Scanner.getNextToken()
       }else{
-        println("Syntax error: Needs an ending bracket")
+        println("Ending Bracket not found")
+        System.exit(1)
       }
-
-    }else{
-      println("Syntax Error: title")
-      System.exit(1)
     }
   }
 
@@ -86,6 +83,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else {
+        println(Compiler.currentToken)
         println("Syntax Error: Text Required")
         System.exit(1)
       }
@@ -99,14 +97,13 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else {
+        println(Compiler.currentToken)
         println("Syntax Error: Text Required")
         System.exit(1)
       }
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
-
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
-        println(Compiler.currentToken)
         variableDefine()
       }else{
         println("Ending Bracket not found")

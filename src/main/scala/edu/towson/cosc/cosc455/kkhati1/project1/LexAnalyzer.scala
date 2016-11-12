@@ -34,36 +34,29 @@ class LexAnalyzer extends LexicalAnalyzer{
     }
     if(lexems.contains(current.toString)){
       Compiler.currentToken = current.toString
-      if(current.equals('=') || current.equals(']'))
-        current = getChar()
-    } else if (text()) {
-      Compiler.Parser.TextBool = true;
-      do {
-        addChar()
-        current = getChar()
-      } while (text())
-      Compiler.currentToken = tokenString
-      tokenString = ""
-    } else if (isSpecial()) {
-      do {
-        addChar();
-        current = getChar()
-      } while (!endChar())
-      if (current.equals('[') || current.equals('\\') || current.equals('*') || current.equals(')') || current.equals('(')) {
+      if(current.equals('=') || (current.equals(']'))) current = getChar()
+    }else if(isSpecial()){
+      addChar()
+      current = getChar()
+      while(!endChar()){
         addChar()
         current = getChar()
       }
-      if (lookup()) {
+      if(lexems.contains(current.toString))
+        addChar()
+      if(lookup()){
         Compiler.currentToken = tokenString
         tokenString = ""
-      } else {
-        println("Lexical Error: Lexical Token Not Found")
+        current = getChar()
+      }else{
+        println(tokenString)
+        println("Lexical Error: isSpecial")
         System.exit(1)
       }
-    }
-    else {
-      println("Lexical Error: Lexical Token Not Found")
-      System.exit(1)
+    }else if(text()){
+      while(text()){Compiler.Parser.TextBool = true; addChar(); current = getChar();}
+      Compiler.currentToken = tokenString
+      tokenString = ""
     }
   }
 
