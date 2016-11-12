@@ -10,9 +10,9 @@ class SynAnalyzer extends SyntaxAnalyzer {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) {
       Tree.push(Compiler.currentToken)
       Compiler.Scanner.getNextToken()
-      //variableDefine()
+      variableDefine()
       title()
-      body()
+      //body()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE)) {
         Tree.push(Compiler.currentToken)
       }
@@ -34,6 +34,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
         System.exit(1)
       }
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
+
         Compiler.Scanner.getNextToken()
         Tree.push(Compiler.currentToken)
       }else{
@@ -78,7 +79,40 @@ class SynAnalyzer extends SyntaxAnalyzer {
   }
 
   override def variableDefine(): Unit = {
+    if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DEFB)){
+      Tree.push(Compiler.currentToken)
+      Compiler.Scanner.getNextToken()
+      if(TextBool) {
+        Tree.push(Compiler.currentToken)
+        Compiler.Scanner.getNextToken()
+      }else {
+        println("Syntax Error: Text Required")
+        System.exit(1)
+      }
+      if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.EQSIGN)){
+        Tree.push(Compiler.currentToken)
+        Compiler.Scanner.getNextToken()
+      }else{
+        println("Syntax Error: Variable Define '=' not found")
+        System.exit(1)}
+      if(TextBool) {
+        Tree.push(Compiler.currentToken)
+        Compiler.Scanner.getNextToken()
+      }else {
+        println("Syntax Error: Text Required")
+        System.exit(1)
+      }
+      if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
 
+        Tree.push(Compiler.currentToken)
+        Compiler.Scanner.getNextToken()
+        println(Compiler.currentToken)
+        variableDefine()
+      }else{
+        println("Ending Bracket not found")
+        System.exit(1)
+      }
+    }
   }
 
   override def variableUse(): Unit = ???

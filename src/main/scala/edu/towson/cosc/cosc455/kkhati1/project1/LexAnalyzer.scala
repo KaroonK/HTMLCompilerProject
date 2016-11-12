@@ -27,12 +27,15 @@ class LexAnalyzer extends LexicalAnalyzer{
   override def getNextToken(): Unit = {
     Compiler.Parser.TextBool = false
     if (isSpace()) {
+      current = getChar()
       while (isSpace()) {
         current = getChar()
       }
     }
     if(lexems.contains(current.toString)){
       Compiler.currentToken = current.toString
+      if(current.equals('=') || current.equals(']'))
+        current = getChar()
     } else if (text()) {
       Compiler.Parser.TextBool = true;
       do {
@@ -54,15 +57,14 @@ class LexAnalyzer extends LexicalAnalyzer{
         Compiler.currentToken = tokenString
         tokenString = ""
       } else {
-        println("GAY LEXICAL ERROR")
+        println("Lexical Error: Lexical Token Not Found")
         System.exit(1)
       }
     }
     else {
-      println("Lexical Error second")
+      println("Lexical Error: Lexical Token Not Found")
       System.exit(1)
     }
-
   }
 
   def isSpace(): Boolean = {
