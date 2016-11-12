@@ -10,14 +10,14 @@ class SynAnalyzer extends SyntaxAnalyzer {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) {
       Tree.push(Compiler.currentToken)
       Compiler.Scanner.getNextToken()
-      variableDefine()
       title()
+      variableDefine()
       //body()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE)) {
         Tree.push(Compiler.currentToken)
       }
     } else {
-      println("SYNTAX ERROR : good message here, fool gittex ")
+      println("SYNTAX ERROR : Beginning HTML Tag not found ")
       System.exit(1)
     }
   }
@@ -44,7 +44,13 @@ class SynAnalyzer extends SyntaxAnalyzer {
     }
   }
 
-  override def body(): Unit = ???
+  override def body(): Unit = {
+    innerText()
+    paragraph()
+    newline()
+    while(!Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE))
+      body()
+  }
 
   override def paragraph(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.PARAB)) {
@@ -60,12 +66,12 @@ class SynAnalyzer extends SyntaxAnalyzer {
         println("SYNTAX ERROR : good message here, fool body")
         System.exit(1)
       }
-    } else {
-      println("SYNTAX ERROR : good message here, fool body")
     }
   }
 
-  override def innerText(): Unit = ???
+  override def innerText(): Unit = {
+    Compiler.currentToken.toUpperCase()
+  }
 
   override def heading(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.HEADING)) {
@@ -126,7 +132,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
 
   override def image(): Unit = ???
 
-  override def newline(): Unit = ???
+  override def newline(): Unit = {}
 
   def retTree: scala.collection.mutable.Stack[String]={
     return Tree;

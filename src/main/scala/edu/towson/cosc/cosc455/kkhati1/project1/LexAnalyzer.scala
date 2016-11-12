@@ -23,7 +23,6 @@ class LexAnalyzer extends LexicalAnalyzer{
     Compiler.position+=1
     Compiler.fileContents.charAt(Compiler.position)
   }
-
   override def getNextToken(): Unit = {
     Compiler.Parser.TextBool = false
     if (isSpace()) {
@@ -59,9 +58,8 @@ class LexAnalyzer extends LexicalAnalyzer{
       tokenString = ""
     }
   }
-
   def isSpace(): Boolean = {
-    if(current.equals('\r') || current.equals('\n') || current.equals(' ')){
+    if(current.equals('\r') || current.equals('\n') || current.equals(' ') || current.equals('\t')){
       true
     }else
       false
@@ -101,7 +99,7 @@ class LexAnalyzer extends LexicalAnalyzer{
   }
   def lookup(): Boolean = {
     var flag = false
-    if(lexems.contains(tokenString))
+    if(lexems.contains(tokenString.toUpperCase()))
       flag = true;
     flag
   }
