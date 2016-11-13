@@ -1,6 +1,5 @@
 \BEGIN
 	\TITLE[The Simpsons]
-	\DEF[bla = blah]
 	# The Simpsons
 	\PARB
 		The members of the [The Simpsons](https://en.wikipedia.org/wiki/The_Simpsons) are:

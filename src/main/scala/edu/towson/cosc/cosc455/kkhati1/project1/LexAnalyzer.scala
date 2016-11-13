@@ -12,8 +12,8 @@ class LexAnalyzer extends LexicalAnalyzer{
   var Text : Boolean = false
   var BoolCheck : Boolean = false
   val lexems: List[String] = List("\\BEGIN","\\END", "\\TITLE[","]", "#", "\\PARB",
-                                  "\\PARE", "*", "+", "\\\\", "[", "(", ")", "![",
-                                  "\\DEF[", "=", "\\USE[")
+                                  "\\PARE", "*", "+", "\\\\", "\\", "[", "(", ")", "![",
+                                  "\\DEF[", "=", "\\USE[", "**")
   var tokenString = ""
   override def addChar(): Unit = {
     tokenString = tokenString + current
@@ -31,9 +31,9 @@ class LexAnalyzer extends LexicalAnalyzer{
         current = getChar()
       }
     }
-    if(lexems.contains(current.toString)){
+    if(current.equals('=') || (current.equals(']') || current.equals('[') || current.equals('+') || current.equals('(') || current.equals(')'))){
       Compiler.currentToken = current.toString
-      if(current.equals('=') || (current.equals(']'))) current = getChar()
+      if(current.equals('=') || (current.equals(']') || current.equals('[') || current.equals('+')|| current.equals('(') || current.equals(')'))) current = getChar()
     }else if(isSpecial()){
       addChar()
       current = getChar()
@@ -44,7 +44,7 @@ class LexAnalyzer extends LexicalAnalyzer{
       if(lexems.contains(current.toString))
         addChar()
       if(lookup()){
-        Compiler.currentToken = tokenString
+        Compiler.currentToken = tokenString.toUpperCase()
         tokenString = ""
         current = getChar()
       }else{
@@ -56,6 +56,9 @@ class LexAnalyzer extends LexicalAnalyzer{
       while(text()){Compiler.Parser.TextBool = true; addChar(); current = getChar();}
       Compiler.currentToken = tokenString
       tokenString = ""
+    }else{
+      println("Lexical Error: Cannot find Lexems")
+      System.exit(1)
     }
   }
   def isSpace(): Boolean = {
@@ -66,13 +69,13 @@ class LexAnalyzer extends LexicalAnalyzer{
   }
   def isSpecial(): Boolean = {
     current match{
-      case '\\' | '*' | '#' | '+' | '[' | '!' => true
+      case '\\' | '*' | '#' | '+' | '[' | '!' | '(' => true
       case _ => false
     }
   }
   def endChar(): Boolean = {
     current match {
-      case '\r'| '\n' | '[' | '\\' | ']' | '*' | ')' | '('=> true
+      case '\r'| '\n' | '[' | '\\' | ']' | '*' | ')' | '(' | ' ' => true
       case _ => false
     }
   }
@@ -92,7 +95,7 @@ class LexAnalyzer extends LexicalAnalyzer{
         Text = true
     }
     if(current.equals(',') || current.equals('.')|| current.equals('\"')|| current.equals('.')
-      || current.equals('?')|| current.equals('_')|| current.equals('/') || current.equals(' '))
+      || current.equals('?')|| current.equals('_')|| current.equals('/') || current.equals(' ') || current.equals(':'))
       Text = true
 
     Text
