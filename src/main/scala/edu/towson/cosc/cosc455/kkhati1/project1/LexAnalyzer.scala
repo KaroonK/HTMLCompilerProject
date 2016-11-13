@@ -41,8 +41,9 @@ class LexAnalyzer extends LexicalAnalyzer{
         addChar()
         current = getChar()
       }
-      if(lexems.contains(current.toString))
+      if(lexems.contains(current.toString)) {
         addChar()
+      }
         if (lookup()) {
           Compiler.currentToken = tokenString.toUpperCase()
           tokenString = ""

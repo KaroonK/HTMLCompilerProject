@@ -10,22 +10,19 @@ import scala.collection.mutable
   */
 class SemAnalyzer {
   val Tree = Compiler.Parser.Tree
-  val resTree = Tree.clone()
-  var varStack = new mutable.Stack[String]
-  var resVarStack = new mutable.Stack[String]
+  var varStack = new mutable.Queue[String]
   var printTree : List[String] = Nil
   var varOn = ""
-  def varScope(): Unit ={
+/*   def varScope(): Unit ={
       var previous, current, next = ""
-    println(resTree.length)
       if(!Tree.isEmpty){
         previous = Tree.pop()
         current = Tree.pop()
         next = Tree.pop()
         while(!Tree.isEmpty){
           if(current.equalsIgnoreCase(CONSTANTS.EQSIGN)){
-            varStack.push(previous)
-            varStack.push(next)
+            varStack.enqueue(previous)
+            varStack.enqueue(next)
           }
           previous = current
           current = next
@@ -34,15 +31,16 @@ class SemAnalyzer {
       }else{
         println("Semantics Error! Tree is Empty!")
       }
-    }
+     while(!varStack.isEmpty)
+       println(varStack.dequeue())
+    }*/
   def convertCode(): Unit = {
-    varScope()
-    println(resTree.length)
+    var resTree = Tree.clone().reverse
+    var resVarStack = varStack.clone()
+    //varScope()
+    var current = resTree.pop()
     while(!resTree.isEmpty){
-      println(resTree.pop())
-    }
-    //var current = resTree.pop()
-    /*while(!resTree.isEmpty){
+      println(current)
       current match {
         case CONSTANTS.DOCB => printTree = "<DOCTYPE html>\n<html>\n<head>\n" ::printTree; current = resTree.pop();
         case CONSTANTS.DOCE => printTree = "</body>\n</html>"::printTree;  current = resTree.pop();
@@ -50,12 +48,101 @@ class SemAnalyzer {
         case CONSTANTS.BRACKETE => {
           if(varOn.equalsIgnoreCase("title")){printTree = "</title>"::printTree}
           else if(varOn.equalsIgnoreCase("links")){printTree = "</a>"::printTree}
+          else{}
           current = resTree.pop();
-        }case CONSTANTS.HEADING => printTree = "<h1>"::printTree; current = resTree.pop();
+        }
+        case CONSTANTS.HEADING => {
+          printTree = "<h1>"::printTree
+          current = resTree.pop()
+          printTree = current::printTree
+          printTree = "</h1>\n"::printTree
+          current = resTree.pop()
+        }
         case CONSTANTS.PARB => printTree = "<p>\n"::printTree; current = resTree.pop();
         case CONSTANTS.PARE => printTree = "</p>\n"::printTree; current = resTree.pop();
-        case CONSTANTS.BOLD =>
+        case CONSTANTS.BOLD => {
+          printTree = "<b>"::printTree;
+          current = resTree.pop();
+          while(!current.equalsIgnoreCase(CONSTANTS.BOLD)){
+            printTree = current::printTree
+            current = resTree.pop()
+          }
+          printTree = "</b>\n"::printTree
+          current = resTree.pop()
+        }
+        case CONSTANTS.ITALICS => {
+          printTree = "<i>"::printTree
+          current = resTree.pop()
+          while(!current.equalsIgnoreCase(CONSTANTS.ITALICS)){
+            printTree = current::printTree
+            current = resTree.pop()
+          }
+          printTree = "</i>\n"::printTree
+          current = resTree.pop()
+        }
+        case CONSTANTS.LISTITEM => {
+          printTree = "<li>"::printTree
+          current = resTree.pop()
+          printTree = current::printTree
+          printTree = "</li>\n"::printTree
+          current = resTree.pop()
+        }
+        case CONSTANTS.NEWLINE => printTree = "<br>\n"::printTree; current = resTree.pop();
+        case CONSTANTS.LINKB => {
+          current = resTree.pop()
+          var Text = current
+          current = resTree.pop()
+          current = resTree.pop()
+          current = resTree.pop()
+          var Link = current
+          printTree = "<a href=\""::Link::"\">"::Text::"</a>\n"::printTree
+          current = resTree.pop()
+        }
+        case CONSTANTS.IMAGEB => {
+          current = resTree.pop()
+          var Text = current
+          current = resTree.pop()
+          current = resTree.pop()
+          current = resTree.pop()
+          var Link = current
+          printTree = "<img src=\""::Link::"\""::"alt=\""::Text::"\">"::printTree
+          current = resTree.pop()
+
+        }
+        case CONSTANTS.DEFB =>{
+          varOn = "DEFB"
+          current = resTree.pop()
+          varStack.enqueue(current)
+          current = resTree.pop()
+          current = resTree.pop()
+          varStack.enqueue(current)
+          current = resTree.pop()
+        }
+        case CONSTANTS.USEB =>{
+          var foundBool = false;
+          resVarStack = varStack.clone()
+          var Text = resVarStack.dequeue()
+          var TextName = resVarStack.dequeue()
+          current = resTree.pop()
+          if(current.equalsIgnoreCase(TextName)){
+            printTree = Text::printTree
+            foundBool = true
+          }else{
+            while(!resVarStack.isEmpty && foundBool){
+              Text = resVarStack.dequeue()
+              TextName = resVarStack.dequeue()
+              if(current.equalsIgnoreCase(TextName)){
+                printTree = Text::printTree
+                foundBool = true
+              }
+
+            }
+          }
+          if(!foundBool){
+            println("SEMANTIC ERROR: Variable not found!")
+          }
+        }
       }
-    }*/
+    }
   }
 }

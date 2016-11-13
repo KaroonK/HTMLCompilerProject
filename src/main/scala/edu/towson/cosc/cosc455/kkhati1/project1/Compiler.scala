@@ -19,6 +19,8 @@ object  Compiler {
 
     Scanner.getNextToken()
     Parser.gittex()
+    //while(!Parser.Tree.isEmpty)
+      //println(Parser.Tree.pop())
     Syman.convertCode()
     //Semantic Analyzer do your thing
 

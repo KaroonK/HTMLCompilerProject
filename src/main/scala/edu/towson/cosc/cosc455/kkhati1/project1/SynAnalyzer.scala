@@ -66,8 +66,6 @@ class SynAnalyzer extends SyntaxAnalyzer {
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.PARE)) {
         Tree.push(Compiler.currentToken)
       } else {
-        while(!Tree.isEmpty)
-          println(Tree.pop())
         println("SYNTAX ERROR : SYNTAX Rules not followed!")
         System.exit(1)
       }

@@ -14,7 +14,7 @@ object CONSTANTS {
   val BOLD    : String = "**"
   val ITALICS : String = "*"
   val LISTITEM: String = "+"
-  val NEWLINE : String = "\\"
+  val NEWLINE : String = "\\\\"
   val LINKB   : String = "["
   val ADDRESSB: String = "("
   val ADDRESSE: String = ")"
