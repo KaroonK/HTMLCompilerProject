@@ -40,16 +40,15 @@ class SemAnalyzer {
     //varScope()
     var current = resTree.pop()
     while(!resTree.isEmpty){
-      println(current)
       current match {
-        case CONSTANTS.DOCB => printTree = "<DOCTYPE html>\n<html>\n<head>\n" ::printTree; current = resTree.pop();
+        case CONSTANTS.DOCB => printTree = "<!DOCTYPE html>\n<html>\n<head>\n" ::printTree; current = resTree.pop();
         case CONSTANTS.DOCE => printTree = "</body>\n</html>"::printTree;  current = resTree.pop();
-        case CONSTANTS.TITLEB => printTree = "<title>"::printTree; varOn = "title";  current = resTree.pop();
-        case CONSTANTS.BRACKETE => {
-          if(varOn.equalsIgnoreCase("title")){printTree = "</title>"::printTree}
-          else if(varOn.equalsIgnoreCase("links")){printTree = "</a>"::printTree}
-          else{}
-          current = resTree.pop();
+        case CONSTANTS.TITLEB =>{
+          current = resTree.pop()
+          var Text = current
+          current = resTree.pop()
+          printTree = "</title>\n"::Text::"<title>"::printTree
+          current = resTree.pop()
         }
         case CONSTANTS.HEADING => {
           printTree = "<h1>"::printTree
@@ -95,7 +94,8 @@ class SemAnalyzer {
           current = resTree.pop()
           current = resTree.pop()
           var Link = current
-          printTree = "<a href=\""::Link::"\">"::Text::"</a>\n"::printTree
+          printTree = "</a>\n"::Text::"\">"::Link::"<a href=\""::printTree
+          current = resTree.pop()
           current = resTree.pop()
         }
         case CONSTANTS.IMAGEB => {
@@ -105,7 +105,8 @@ class SemAnalyzer {
           current = resTree.pop()
           current = resTree.pop()
           var Link = current
-          printTree = "<img src=\""::Link::"\""::"alt=\""::Text::"\">"::printTree
+          printTree = "\">"::Text::" alt=\""::"\""::Link::"<img src=\""::printTree
+          current = resTree.pop()
           current = resTree.pop()
 
         }
@@ -142,7 +143,13 @@ class SemAnalyzer {
             println("SEMANTIC ERROR: Variable not found!")
           }
         }
+        case _ => printTree = current::printTree; current = resTree.pop()
       }
     }
+    if(current.equalsIgnoreCase(CONSTANTS.DOCE)) {
+      printTree = "\n</body>\n</html>"::printTree;
+    }
+    printTree = printTree.reverse
+    println(printTree.mkString)
   }
 }
