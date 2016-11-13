@@ -19,6 +19,7 @@ object  Compiler {
 
     Scanner.getNextToken()
     Parser.gittex()
+    Syman.convertCode()
     //Semantic Analyzer do your thing
 
   }
