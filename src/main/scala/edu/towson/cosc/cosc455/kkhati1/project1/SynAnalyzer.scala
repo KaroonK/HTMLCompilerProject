@@ -7,6 +7,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
   var Tree = new scala.collection.mutable.Stack[String]
   var TextBool = false
   var innerItemFound = false;
+  var count = 0;
   override def gittex() : Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) {
       Tree.push(Compiler.currentToken)
@@ -16,6 +17,10 @@ class SynAnalyzer extends SyntaxAnalyzer {
       body()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE)) {
         Tree.push(Compiler.currentToken)
+        if (Compiler.fileContents.length - Compiler.position > 15) {
+          println("SYNTAX ERROR: No Annotations after the \\END Tag")
+          System.exit(1)
+        }
       }
     } else {
       println("SYNTAX ERROR : Beginning HTML Tag not found ")
@@ -31,12 +36,11 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else {
-        println("Syntax Error: Text Required")
+        println("SYNTAX ERROR: Text Required")
         System.exit(1)
       }
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
         Tree.push(Compiler.currentToken)
-        Compiler.Scanner.getNextToken()
       }else{
         println("Ending Bracket not found")
         System.exit(1)
@@ -45,15 +49,14 @@ class SynAnalyzer extends SyntaxAnalyzer {
   }
 
   override def body(): Unit = {
-    paragraph()
     innerText()
+    paragraph()
     newline()
     while(!Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE)) {
       Compiler.Scanner.getNextToken()
       body()
     }
   }
-
   override def paragraph(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.PARB)) {
       Tree.push(Compiler.currentToken)
@@ -62,16 +65,14 @@ class SynAnalyzer extends SyntaxAnalyzer {
       innerText()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.PARE)) {
         Tree.push(Compiler.currentToken)
-        Compiler.Scanner.getNextToken()
       } else {
         while(!Tree.isEmpty)
           println(Tree.pop())
-        println("SYNTAX ERROR : Need an ending token for paragraph")
+        println("SYNTAX ERROR : SYNTAX Rules not followed!")
         System.exit(1)
       }
     }
   }
-
   override def innerText(): Unit = {
     Compiler.currentToken match{
       case CONSTANTS.DEFB => variableDefine(); innerText()
@@ -88,11 +89,11 @@ class SynAnalyzer extends SyntaxAnalyzer {
           text();
           innerText()
         }
-
       }
     }
 
   }
+
 
   override def heading(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.HEADING)) {
@@ -102,7 +103,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else {
-        println("Syntax Error: Text Required")
+        println("SYNTAX ERROR: Text Required")
         System.exit(1)
       }
 
@@ -117,20 +118,20 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else {
-        println("Syntax Error: Text Required")
+        println("SYNTAX ERROR: Text Required")
         System.exit(1)
       }
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.EQSIGN)){
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else{
-        println("Syntax Error: Variable Define '=' not found")
+        println("SYNTAX ERROR: Variable Define '=' not found")
         System.exit(1)}
       if(TextBool) {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else {
-        println("Syntax Error: Text Required")
+        println("SYNTAX ERROR: Text Required")
         System.exit(1)
       }
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
@@ -138,7 +139,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Compiler.Scanner.getNextToken()
         variableDefine()
       }else{
-        println("Ending Bracket not found")
+        println("SYNTAX ERROR: Ending Bracket not found")
         System.exit(1)
       }
     }
@@ -151,14 +152,14 @@ class SynAnalyzer extends SyntaxAnalyzer {
       if(TextBool){
         text()
       }else{
-        println("Syntax Error: Variable Use Text Required")
+        println("SYNTAX ERROR: Variable Use Text Required")
         System.exit(1)
       }
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else{
-        println("Syntax Error: Variable Use Ending Tag Required")
+        println("SYNTAX ERROR: Variable Use Ending Tag Required")
         System.exit(1)
       }
     }
@@ -175,7 +176,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else{
-        println("Syntax Error: Bold Ending Tag Required")
+        println("SYNTAX ERROR: Bold Ending Tag Required")
         System.exit(1)
       }
     }
@@ -192,7 +193,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else{
-        println("Syntax Error: Italics Ending Tag Required")
+        println("SYNTAX ERROR: Italics Ending Tag Required")
         System.exit(1)
       }
     }
@@ -209,21 +210,29 @@ class SynAnalyzer extends SyntaxAnalyzer {
 
   override def innerItem(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.USEB)){
+      innerItemFound = true
       variableUse()
       innerItem()
     }else if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BOLD)){
+      innerItemFound = true
       bold()
       innerItem()
     }else if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ITALICS)){
+      innerItemFound = true
       italics()
       innerItem()
     }else if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.LINKB)){
+      innerItemFound = true
       link()
       innerItem()
     }else{
-      if(TextBool) {
-        text()
-      }else{println("Syntax Error: Text Required"); System.exit(1)}
+      if(!innerItemFound) {
+        if (TextBool) {
+          text()
+        } else {
+          println("SYNTAX ERROR: Text Required"); System.exit(1)
+        }
+      }
     }
   }
 
@@ -235,28 +244,28 @@ class SynAnalyzer extends SyntaxAnalyzer {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else {
-        println("Syntax Error: Text Required")
+        println("SYNTAX ERROR: Text Required")
         System.exit(1)
       }
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else{
-        println("Syntax Error: Ending Bracket Required for Link")
+        println("SYNTAX ERROR: Ending Bracket Required for Link")
         System.exit(1)
       }
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSB)){
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else{
-        println("Syntax Error: Address required after the description ")
+        println("SYNTAX ERROR: Address required after the description ")
         System.exit(1)
       }
       if(TextBool) {
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
       }else {
-        println("Syntax Error: Text Required")
+        println("SYNTAX ERROR: Text Required")
         System.exit(1)
       }
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)){
@@ -266,7 +275,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
           Tree.push(Compiler.currentToken)
           Compiler.Scanner.getNextToken()
         }else {
-          println("Syntax Error: Text Required")
+          println("SYNTAX ERROR: Text Required")
           System.exit(1)
         }
         if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)){
@@ -274,7 +283,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
           Compiler.Scanner.getNextToken()
         }
       }else{
-        println("Syntax Error: Ending Link Symbol required")
+        println("SYNTAX ERROR: Ending Link Symbol required")
         System.exit(1)
       }
 
@@ -287,24 +296,24 @@ class SynAnalyzer extends SyntaxAnalyzer {
       Compiler.Scanner.getNextToken()
       if(TextBool){
         text()
-      }else{println("Syntax Error: Image Text Required");System.exit(1)}
+      }else{println("SYNTAX ERROR: Image Text Required");System.exit(1)}
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
-      }else{println("Syntax Error: Image Ending Bracket Before Link Required");System.exit(1)}
+      }else{println("SYNTAX ERROR: Image Ending Bracket Before Link Required");System.exit(1)}
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSB)){
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
         if(TextBool){
           text()
-        }else{println("Syntax Error: Image Address Required");System.exit(1)}
+        }else{println("SYNTAX ERROR: Image Address Required");System.exit(1)}
         if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)){
           Tree.push(Compiler.currentToken)
           Compiler.Scanner.getNextToken()
         }else{
-          println("Syntax Error: Image Ending Address Token Required")
+          println("SYNTAX ERROR: Image Ending Address Token Required")
         }
-      }else{println("Syntax Error: Image Address Begin Bracket Required")}
+      }else{println("SYNTAX ERROR: Image Address Begin Bracket Required")}
     }
   }
 

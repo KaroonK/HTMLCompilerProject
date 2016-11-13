@@ -19,10 +19,6 @@ object  Compiler {
 
     Scanner.getNextToken()
     Parser.gittex()
-    var Tree2 = new mutable.Stack[String]()
-    Tree2 = Parser.retTree
-    while(!Tree2.isEmpty)
-      println(Tree2.pop())
     //Semantic Analyzer do your thing
 
   }

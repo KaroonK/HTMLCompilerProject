@@ -43,15 +43,15 @@ class LexAnalyzer extends LexicalAnalyzer{
       }
       if(lexems.contains(current.toString))
         addChar()
-      if(lookup()){
-        Compiler.currentToken = tokenString.toUpperCase()
-        tokenString = ""
-        current = getChar()
-      }else{
-        println(tokenString)
-        println("Lexical Error: isSpecial")
-        System.exit(1)
-      }
+        if (lookup()) {
+          Compiler.currentToken = tokenString.toUpperCase()
+          tokenString = ""
+          current = getChar()
+        } else {
+          println(tokenString)
+          println("Lexical Error: " + tokenString + " is not valid!")
+          System.exit(1)
+        }
     }else if(text()){
       while(text()){Compiler.Parser.TextBool = true; addChar(); current = getChar();}
       Compiler.currentToken = tokenString
@@ -75,7 +75,7 @@ class LexAnalyzer extends LexicalAnalyzer{
   }
   def endChar(): Boolean = {
     current match {
-      case '\r'| '\n' | '[' | '\\' | ']' | '*' | ')' | '(' | ' ' => true
+      case '\r'| '\n' | '[' | '\\' | ']' | '*' | ')' | '(' | ' ' | ':' | '\t' => true
       case _ => false
     }
   }
