@@ -14,7 +14,7 @@ class SemAnalyzer {
   var printTree : List[String] = Nil
   var varOn = ""
   var liBool = false
-  var useBooleanLi = false;
+  var booleanLi = false
   var scope = ""
   def convertCode(): Unit = {
     var resTree = Tree.clone().reverse
@@ -104,6 +104,7 @@ class SemAnalyzer {
           current = resTree.pop()
         }
         case CONSTANTS.USEB => {
+          booleanLi = true
           var resVarStack = varStack.clone()
           var foundBool = false
           var varInfo = resVarStack.pop()
@@ -138,7 +139,14 @@ class SemAnalyzer {
           current = resTree.pop()
         }
         case _ => {
-          printTree = current:: printTree; current = resTree.pop(); if(liBool && useBooleanLi){printTree = "</li>\n"::printTree; liBool = false; };
+          printTree = current:: printTree
+          current = resTree.pop()
+          if(booleanLi)
+            liBool = false
+          if(liBool){
+            printTree = "</li>\n"::printTree
+            liBool = false
+          }
         }
       }
     }
@@ -147,6 +155,7 @@ class SemAnalyzer {
     }
     printTree = printTree.reverse
     writeHTML(printTree.mkString)
+    println(printTree.mkString)
     openHTMLFileInBrowser("Output.html")
 
   }

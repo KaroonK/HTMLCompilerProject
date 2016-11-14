@@ -31,9 +31,9 @@ class LexAnalyzer extends LexicalAnalyzer{
         current = getChar()
       }
     }
-    if(current.equals('=') || (current.equals(']') || current.equals('[') || current.equals('+') || current.equals('(') || current.equals(')'))){
+    if(current.equals('=') || (current.equals(']') || current.equals('[') || current.equals('+') || current.equals('(') || current.equals(')') )){
       Compiler.currentToken = current.toString
-      if(current.equals('=') || (current.equals(']') || current.equals('[') || current.equals('+')|| current.equals('(') || current.equals(')'))) current = getChar()
+      if(current.equals('=') || (current.equals(']') || current.equals('[') || current.equals('+')|| current.equals('(') || current.equals(')') )) current = getChar()
     }else if(isSpecial()){
       addChar()
       current = getChar()
@@ -75,7 +75,7 @@ class LexAnalyzer extends LexicalAnalyzer{
   }
   def endChar(): Boolean = {
     current match {
-      case '\r'| '\n' | '[' | '\\' | ']' | '*' | ')' | '(' | ' ' | ':' | '\t' => true
+      case '\r' | '\n' | '[' | '\\' | ']' | '*' | ')' | '(' | ' ' | ':' | '\t' => true
       case _ => false
     }
   }
