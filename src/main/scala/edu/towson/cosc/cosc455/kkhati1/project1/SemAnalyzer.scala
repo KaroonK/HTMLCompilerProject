@@ -155,7 +155,6 @@ class SemAnalyzer {
     }
     printTree = printTree.reverse
     writeHTML(printTree.mkString)
-    println(printTree.mkString)
     openHTMLFileInBrowser("Output.html")
 
   }
