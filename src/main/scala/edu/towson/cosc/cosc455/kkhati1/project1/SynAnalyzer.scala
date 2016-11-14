@@ -156,6 +156,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
         Tree.push(Compiler.currentToken)
         Compiler.Scanner.getNextToken()
+        variableUse()
       }else{
         println("SYNTAX ERROR: Variable Use Ending Tag Required")
         System.exit(1)
