@@ -45,7 +45,7 @@ class SemAnalyzer {
           current = resTree.pop()
           var Text = current
           current = resTree.pop()
-          printTree = "</title>\n"::Text::"<title>"::printTree
+          printTree = "<body>\n"::"</head>\n"::"</title>\n"::Text::"<title>"::printTree
           current = resTree.pop()
         }
         case CONSTANTS.HEADING => {
@@ -81,7 +81,6 @@ class SemAnalyzer {
           printTree = "<li>"::printTree
           current = resTree.pop()
           printTree = current::printTree
-          printTree = "</li>\n"::printTree
           current = resTree.pop()
         }
         case CONSTANTS.NEWLINE => printTree = "<br>\n"::printTree; current = resTree.pop();
