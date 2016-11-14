@@ -19,7 +19,6 @@ class SemAnalyzer {
   def convertCode(): Unit = {
     var resTree = Tree.clone().reverse
     var resVarStack = varStack.clone()
-    //varScope()
     var current = resTree.pop()
     while(!resTree.isEmpty) {
       current match {
@@ -148,8 +147,7 @@ class SemAnalyzer {
     }
     printTree = printTree.reverse
     writeHTML(printTree.mkString)
-    println(printTree.mkString)
-    //openHTMLFileInBrowser("Output.html")
+    openHTMLFileInBrowser("Output.html")
 
   }
   def writeHTML(s : String): Unit = {
