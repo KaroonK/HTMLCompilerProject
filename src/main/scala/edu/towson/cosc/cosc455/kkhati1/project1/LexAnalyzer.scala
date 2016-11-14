@@ -49,7 +49,6 @@ class LexAnalyzer extends LexicalAnalyzer{
           tokenString = ""
           current = getChar()
         } else {
-          println(tokenString)
           println("Lexical Error: " + tokenString + " is not valid!")
           System.exit(1)
         }

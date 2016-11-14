@@ -74,7 +74,7 @@ class SynAnalyzer extends SyntaxAnalyzer {
   override def innerText(): Unit = {
     Compiler.currentToken match{
       case CONSTANTS.DEFB => variableDefine(); innerText()
-      case CONSTANTS.USEB => variableUse(); innerText()
+      case CONSTANTS.USEB => variableUse();  innerText()
       case CONSTANTS.HEADING => heading(); innerText()
       case CONSTANTS.BOLD => bold(); innerText()
       case CONSTANTS.ITALICS =>italics(); innerText()

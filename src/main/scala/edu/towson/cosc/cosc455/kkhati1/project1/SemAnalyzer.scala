@@ -10,7 +10,7 @@ import scala.collection.mutable
   */
 class SemAnalyzer {
   val Tree = Compiler.Parser.Tree
-  var varStack = new mutable.Queue[String]
+  var varStack = new mutable.Stack[String]
   var printTree : List[String] = Nil
   var varOn = ""
 /*   def varScope(): Unit ={
@@ -21,8 +21,8 @@ class SemAnalyzer {
         next = Tree.pop()
         while(!Tree.isEmpty){
           if(current.equalsIgnoreCase(CONSTANTS.EQSIGN)){
-            varStack.enqueue(previous)
-            varStack.enqueue(next)
+            varStack.push(previous)
+            varStack.push(next)
           }
           previous = current
           current = next
@@ -31,8 +31,6 @@ class SemAnalyzer {
       }else{
         println("Semantics Error! Tree is Empty!")
       }
-     while(!varStack.isEmpty)
-       println(varStack.dequeue())
     }*/
   def convertCode(): Unit = {
     var resTree = Tree.clone().reverse
@@ -111,37 +109,33 @@ class SemAnalyzer {
 
         }
         case CONSTANTS.DEFB =>{
-          varOn = "DEFB"
           current = resTree.pop()
-          varStack.enqueue(current)
+          varStack.push(current)
           current = resTree.pop()
           current = resTree.pop()
-          varStack.enqueue(current)
+          varStack.push(current)
+          current = resTree.pop()
           current = resTree.pop()
         }
         case CONSTANTS.USEB =>{
-          var foundBool = false;
-          resVarStack = varStack.clone()
-          var Text = resVarStack.dequeue()
-          var TextName = resVarStack.dequeue()
+          var resVarStack = varStack.clone()
+          var foundBool = false
+          var varInfo = resVarStack.pop()
+          var varName = resVarStack.pop()
           current = resTree.pop()
-          if(current.equalsIgnoreCase(TextName)){
-            printTree = Text::printTree
+          if(current.trim().equalsIgnoreCase(varName.trim())){
             foundBool = true
-          }else{
-            while(!resVarStack.isEmpty && foundBool){
-              Text = resVarStack.dequeue()
-              TextName = resVarStack.dequeue()
-              if(current.equalsIgnoreCase(TextName)){
-                printTree = Text::printTree
-                foundBool = true
-              }
+            printTree = " "::varInfo::printTree
 
-            }
           }
           if(!foundBool){
-            println("SEMANTIC ERROR: Variable not found!")
+            println(current)
+            println(varName)
+            println("SEMANTIC ERROR: Variable Not Found!");
+            System.exit(1)
           }
+          current = resTree.pop()
+          current = resTree.pop()
         }
         case _ => printTree = current::printTree; current = resTree.pop()
       }
@@ -150,6 +144,30 @@ class SemAnalyzer {
       printTree = "\n</body>\n</html>"::printTree;
     }
     printTree = printTree.reverse
+    writeHTML(printTree.mkString)
     println(printTree.mkString)
+    openHTMLFileInBrowser("Output.html")
+
+  }
+  def writeHTML(s : String): Unit = {
+    val writer = new PrintWriter(new File("Output.html"))
+    writer.write(s)
+    writer.close()
+  }
+
+  /* * Hack Scala/Java function to take a String filename and open in default web browser. */
+  def openHTMLFileInBrowser(htmlFileStr : String) = {
+    val file : File = new File(htmlFileStr.trim)
+    println(file.getAbsolutePath)
+    if (!file.exists())
+      sys.error("File " + htmlFileStr + " does not exist.")
+
+    try {
+      Desktop.getDesktop.browse(file.toURI)
+    }
+    catch {
+      case ioe: IOException => sys.error("Failed to open file:  " + htmlFileStr)
+      case e: Exception => sys.error("He's dead, Jim!")
+    }
   }
 }
